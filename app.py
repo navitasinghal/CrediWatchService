@@ -1,9 +1,10 @@
 from flask import Flask, jsonify, request
 from flask_restful import Resource, Api
+from flask_cors import CORS
 
 app = Flask(__name__)
 api = Api(app) 
-  
+CORS(app)  
 
 class Test(Resource):
     def get(self): 
@@ -21,10 +22,10 @@ class ConsumerData(Resource):
     
     def post(self):
         data = request.get_json()     # status code 
-        new_data=newData(data)
-
-        print(new_data)
-        return jsonify({'data': new_data})
+        new_data=(newData(data))
+        x=(jsonify([new_data]))
+        print(x, new_data)
+        return jsonify([new_data])
 
 
 api.add_resource(Test, '/') 
