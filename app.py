@@ -58,14 +58,56 @@ class ConsumerData(Resource):
         df_test = df_test.astype(str).astype(int)
         prediction = model.predict(df_test)
         if(prediction >= 0.5):
-            result = "Yes"
+            result = "YES"
         else:
-            result = "No"
+            result = "NO"
         return result
+
+
+class Login(Resource):
+    def get(self):
+        return jsonify({'email':'navitasinghal77@gmail.com', 'password':'password'})
+    def post(self):
+        data = request.get_json()
+        return jsonify({'email':'navitasinghal77@gmail.com', 'password':'password'})
+
+
+class LoanRecommendation(Resource):
+    def get(self):
+        return jsonify({'Loan Recommendation' : 'Works well'})
+    def post(self):
+        data = request.get_json()
+        x = [data]
+        df = pd.DataFrame(x)
+        print(x,df.head())
+        res = {"result":[], "plotX":[],"plotY":[]}
+        if(df['grade'][0]=='A' or df['grade'][0]=='B'):
+            res["result"].append("Loans are in safe range")
+        else:
+            res["result"].append("Lower grades have higher incidence of defaults on loans")
+        if(int(df['int_rate'][0])>=19):
+            res["result"].append("More than 33 percent of loans are Charged Off.")
+        else:
+            res["result"].append("At rates of 19 percent and above, more than 33 percent of loans are Charged Off.")
+        
+        chance = 0.20* int(df['annual_inc'][0])
+        if(int(df['annual_inc'][0])<chance):
+            res["result"].append("defaults chance are low.")
+        chance = 0.30* int(df['annual_inc'][0])
+        if(int(df['annual_inc'][0])<chance):
+            res["result"].append("defaults chance are high.")
+        else:
+            res["result"].append("defaults chance is low")
+        res["plotX"].append(["B","A","C","D","E","F","G"])
+        res["plotY"].append([3701,3170,2182,1484,883,356,92])
+        return res
 
 
 api.add_resource(Test, '/')
 api.add_resource(ConsumerData, '/consumerData')
+api.add_resource(Login, '/session')
+api.add_resource(LoanRecommendation, '/loanRecommendation')
+
 # driver function
 if __name__ == '__main__':
     app.run(debug=True)
